@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的第一个页面</title>
+  <link rel="stylesheet" href="/static/css/mystyle.css">
+  <script src="/static/js/vue.js"></script>
+  <script src="/static/js/axios.js"></script>
+</head>
+
+<body>
+  <div id="home">
+    <div v-show='onOff'>
+      <div class="header">
+        <h1>
+          {{ siteinfo.title }}
+        </h1>
+        <img src="/upload/{{ siteinfo.logo }}" alt="">
+      </div>
+
+      <hr />
+      <div class="content">
+        <div class="menu">
+
+          <div v-if="item.id==choosed" v-for="item in classes" class="item" style="background: #777;color:#fff">
+            <a>[[item.text]]</a>
+          </div>
+          <div v-else v-on:click="chooseClass(item.id)" class="item">
+            <a>[[item.text]]</a>
+          </div>
+
+        </div>
+
+        <div v-if="item.id==choosed" v-for="item in classes" class="userlist">
+          <p>[[item.text]]</p>
+
+          <hr>
+          <div v-if="item.userlist.length>0" v-for="user in item.userlist" class="user">
+            <img src="/static/admin.jpg" alt="">
+            <p>[[user.nickName]]</p>
+          </div>
+          <p v-else>没有用户</p>
+
+        </div>
+      </div>
+      <hr />
+    </div>
+
+
+    <input v-model="inputText" type="text" name="" id="" style="height:30px;width:700px">
+    <p>[[inputText]]</p>
+    <div class="foot">
+      Copyright © 2020 Dweb工作室
+      <button @click="onOffClick">开关</button>
+    </div>
+
+  </div>
+
+
+  <script>
+    new Vue({
+      delimiters: ['[[', ']]'],
+      el: '#home',
+      data: {
+        inputText:'',
+        choosed: 1,
+        classes: [],
+        onOff:true
+      },
+      mounted() {
+        this.getData()
+      },
+      methods: {
+        onOffClick(){
+          this.onOff = !this.onOff
+        },
+        getData() {
+          axios({
+            url: '/api/',
+            type: 'json',
+            method: 'get'
+          }).then((res) => {
+            console.log(res.data.classes)
+            this.classes = res.data.classes
+          })
+        },
+        chooseClass(id) {
+          console.log(id)
+          this.choosed = id
+        }
+      },
+    })
+  </script>
+</body>
+
+</html>
